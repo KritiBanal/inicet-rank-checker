@@ -1,0 +1,87 @@
+<style>
+.pchart{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.pchart h2,.pcard h2{font-family:var(--display);font-size:1.1rem;margin:0}
+.pchart svg{display:block;width:100%;height:auto}
+.pchart svg text{font-family:var(--body)}
+.lg{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.8rem;color:var(--muted);list-style:none;margin:0;padding:0}
+.lg li{display:flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:50%}
+.sw.dia{border-radius:1px;transform:rotate(45deg);width:9px;height:9px;background:var(--accent)}
+.sw.ring{border:2px solid var(--accent);width:8px;height:8px}
+.sw.s0{background:#8a6fd1}.sw.s1{background:var(--strong)}.sw.s2{background:var(--warn)}
+.sw.bar{width:18px;height:6px;border-radius:3px;background:var(--line)}
+.sw.ref{width:0;height:12px;border-radius:0;border-left:2px dashed var(--fg)}
+.ptip{position:absolute;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:6px;box-shadow:0 4px 16px rgba(0,0,0,.15);padding:6px 10px;font-size:.8rem;min-width:13rem;z-index:2}
+.ptip .h{color:var(--muted);margin-bottom:2px}
+.ptip .r{display:flex;justify-content:space-between;gap:14px;font-variant-numeric:tabular-nums}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,22rem),1fr));gap:12px}
+.pgrid>.pcard:first-child{grid-column:1/-1}
+.pcard{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.pcard .tw{border:0;max-height:28rem;overflow:auto}
+.pcard table{min-width:520px;font-size:.85rem}
+.pcard thead th{position:sticky;top:0;background:var(--panel);cursor:default}
+td.pr{color:var(--accent);font-weight:600}
+.qrow{display:grid;grid-template-columns:3rem 1fr 4.5rem;gap:8px;align-items:center;font-size:.85rem;font-variant-numeric:tabular-nums}
+.qrow>span:last-child{text-align:right;font-family:var(--mono)}
+.qbar{height:10px;border-radius:4px;background:var(--line)}
+.qrow.on .qbar{background:var(--accent)}
+.qbars{display:flex;flex-direction:column;gap:6px}
+.big{font-family:var(--mono);font-size:1.2rem;color:var(--accent)}
+.take{margin:0;max-width:70ch}
+.take b{font-weight:600}
+details{font-size:.85rem;color:var(--muted)}
+details summary{cursor:pointer;color:var(--fg);font-weight:600}
+details dl{display:grid;grid-template-columns:minmax(8rem,max-content) minmax(0,1fr);gap:6px 14px;margin:10px 0 0}
+details dt{color:var(--fg);font-weight:600}details dd{margin:0}
+@media (max-width:520px){details dl{grid-template-columns:1fr}}
+</style>
+<div class="wrap">
+<header>
+<div class="hrow"><h1>INI-CET <span>January 2027</span> cutoff predictions</h1>
+<div class="theme" role="group" aria-label="Theme"><button type="button" data-t="">Auto</button><button type="button" data-t="light">Light</button><button type="button" data-t="dark">Dark</button></div></div>
+<p>Estimated closing ranks for the January 2027 session, worked out from the January 2025, January 2026 and July 2026 seat allocations. These are estimates, not official cutoffs. <a class="ilink" href="index.html">Back to the rank checker</a></p>
+</header>
+<div class="controls">
+<label for="p-branch">Branch<select id="p-branch"></select></label>
+<label for="p-cat">Seat category<select id="p-cat"><option>UR</option><option>OBC</option><option>EWS</option><option>SC</option><option>ST</option></select></label>
+<label for="p-rank">Your INI-CET rank<input id="p-rank" type="number" min="1" max="40000" inputmode="numeric" placeholder="e.g. 1500"></label>
+</div>
+<p class="take" id="p-take"></p>
+<section class="pchart">
+<h2>Predicted closing rank by college</h2>
+<p class="note">Each row is one college, hardest to get at the top. The grey bar spans the lowest and highest final closing ranks seen in past sessions. Hover or tap a row for details.</p>
+<ul class="lg">
+<li><span class="sw dia"></span>Estimated final-round close</li>
+<li><span class="sw ring"></span>Estimated Round 1 close</li>
+<li><span class="sw s0"></span>Jan 2025</li><li><span class="sw s1"></span>Jan 2026</li><li><span class="sw s2"></span>Jul 2026</li>
+<li><span class="sw bar"></span>Past range</li>
+<li id="lg-you" hidden><span class="sw ref"></span>Your rank</li>
+</ul>
+<div id="p-chart"></div>
+</section>
+<div class="pgrid">
+<section class="pcard">
+<h2>Prediction table</h2>
+<p class="note">Final closing rank in each past session and the estimate for January 2027. A dash means the seat wasn't offered or allotted that session.</p>
+<div class="tw"><table><thead><tr><th>College</th><th class="num">Seats</th><th class="num">Jan 25</th><th class="num">Jan 26</th><th class="num">Jul 26</th><th class="num">Est. R1</th><th class="num">Est. final</th><th>Confidence</th></tr></thead><tbody id="p-tbody"></tbody></table></div>
+</section>
+<section class="pcard">
+<h2>This year's rank list</h2>
+<p class="note">Provisionally qualified candidates in the January 2027 result (AIIMS notification 304/2026), by the category they applied under. Sponsored and foreign national candidates are left out.</p>
+<div class="qbars" id="p-qual"></div>
+<p class="note" id="p-pos"></p>
+</section>
+</div>
+<details>
+<summary>How the estimate is made</summary>
+<dl>
+<dt>Closing rank</dt><dd>The last rank allotted a seat of that category at that college, in any round (Round 1, Round 2 or the open round). Categories follow the seat's roster point, not the candidate's own category.</dd>
+<dt>Estimated final close</dt><dd>A weighted average of past final closing ranks: January 2026 counts 45%, July 2026 35% and January 2025 20%. Sessions where the seat wasn't allotted are left out and the weights rescaled.</dd>
+<dt>Estimated Round 1 close</dt><dd>The same weighting applied to Round 1 closing ranks.</dd>
+<dt>Confidence</dt><dd>Higher: all three sessions had the seat and their closes were within 1.6 times of each other. Medium: at least two sessions within 2.2 times. Low: anything else, often a single seat that moved a lot.</dd>
+<dt>Your chances</dt><dd>Likely in R1 if your rank is at or under the Round 1 estimate, likely by final if under the final estimate, borderline if under the highest past close, otherwise unlikely.</dd>
+<dt>Left out</dt><dd>PwBD, institutional (IP/INST), sponsored, foreign national and special-quota seats. The January 2027 seat matrix isn't published yet, so a college adding or cutting seats will move its close. Candidate counts for past sessions aren't known, so the estimate isn't scaled for pool size.</dd>
+</dl>
+</details>
+<footer>Sources: AIIMS New Delhi result notifications 168/2024, 01/2025, 28/2025 (Jan 2025), 327/2025, 02/2026, 69/2026 (Jan 2026), 205/2026, 216/2026, 261/2026 (Jul 2026) and 304/2026 (January 2027 qualified list). Past closing ranks guide you; they don't guarantee a seat.</footer>
+</div>
