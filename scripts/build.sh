@@ -18,3 +18,20 @@ cd "$(dirname "$0")/.."
 </html>'
 } > docs/index.html
 echo "Built docs/index.html"
+{
+  echo '<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}</style>
+<title>INI-CET January 2027 Cutoff Predictions</title>'
+  grep -v -e 'claude:viewport-fit-sides' -e '<title>' src/head.html
+  echo '</head>
+<body>'
+  cat src/predict.html
+  echo '<script>'; cat data/predictions.js; echo; cat src/predict.js; echo '</script>
+</body>
+</html>'
+} > docs/predictions.html
+echo "Built docs/predictions.html"
