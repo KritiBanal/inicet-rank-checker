@@ -55,7 +55,7 @@ def parse(fn,yr,rnd):
     out.append(dict(y=yr,r=rnd,rank=rank,cat=cat,pw=pw,inst=inst,subj=subj,sec=sec,seat=roster))
   return out
 allr=[]
-for fn,yr,rnd in [('r1.txt',2026,1),('r2.txt',2026,2),('r3.txt',2026,3),('y1.txt',2025,1),('y2.txt',2025,2),('y3.txt',2025,3)]:
+for fn,yr,rnd in [('r1.txt',2026,1),('r2.txt',2026,2),('r3.txt',2026,3),('y1.txt',2025,1),('y2.txt',2025,2),('y3.txt',2025,3),('j1.txt',20267,1),('j2.txt',20267,2),('j3.txt',20267,3)]:
   o=parse(fn,yr,rnd); allr+=o; print(fn,len(o))
 json.dump(allr,open('all.json','w'))
 c=collections.Counter(r['seat'] and re.sub(r'-\d+(/[A-Z]+)?$','',r['seat']) for r in allr); print(c)

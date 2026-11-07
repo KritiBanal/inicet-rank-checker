@@ -1,7 +1,7 @@
 import json,re,collections
 a=json.load(open('all.json'))
 MDS=[('conservative','Conservative Dentistry & Endodontics'),('maxil','Oral & Maxillofacial Surgery'),('orthodont','Orthodontics'),('pa?ediatric|pedodont','Paediatric & Preventive Dentistry'),('periodont','Periodontology'),('prosthodont','Prosthodontics'),('public health','Public Health Dentistry')]
-MD=[('trauma surgery','Trauma Surgery & Critical Care (MCh 6 yr)'),('trauma & emergency|emergency','Emergency Medicine'),
+MD=[('trauma surgery','Trauma Surgery & Critical Care (MCh 6 yr)'),('traumatology','Traumatology & Surgery'),('internal medicine','General Medicine'),('trauma & emergency|emergency','Emergency Medicine'),
 ('cardiothora','Cardiothoracic & Vascular Surgery (MCh 6 yr)'),('neuro ?surgery','Neurosurgery (MCh 6 yr)'),('pa?ediatrics? surgery','Paediatric Surgery (MCh 6 yr)'),
 ('plastic|burn','Plastic & Burns Surgery (MCh 6 yr)'),('surgical gastro','Surgical Gastroenterology (MCh 6 yr)'),('urology','Urology (MCh 6 yr)'),
 ('neurology','Neurology (DM 6 yr)'),('infectious|dm-id','Infectious Diseases (DM 6 yr)'),
@@ -34,6 +34,7 @@ print(collections.Counter(o[6] for o in out))
 bc=collections.Counter(o[5] for o in out); print(len(bc)); print(sorted(bc.items()))
 em=collections.Counter((o[0],o[1]) for o in out if o[5]=='Emergency Medicine'); print(em)
 cats=sorted(set(o[3] for o in out)); insts=sorted(set(o[4] for o in out)); brs=sorted(bc); seats=sorted(set(o[6] for o in out))
-enc=[[o[0]-2025,o[1],o[2],cats.index(o[3]),insts.index(o[4]),brs.index(o[5]),seats.index(o[6]),o[7]] for o in out]
+SESS={2025:0,2026:1,20267:2}
+enc=[[SESS[o[0]],o[1],o[2],cats.index(o[3]),insts.index(o[4]),brs.index(o[5]),seats.index(o[6]),o[7]] for o in out]
 open('alldata.js','w').write('const D='+json.dumps(dict(cats=cats,insts=insts,brs=brs,seats=seats,rows=enc),separators=(',',':'))+';')
 import os;print(os.path.getsize('alldata.js'))

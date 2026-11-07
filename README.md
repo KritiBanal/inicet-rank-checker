@@ -1,6 +1,6 @@
 # INI-CET rank checker
 
-A static website that shows closing ranks for every MD, MS, MCh/DM (6 year) and MDS branch at AIIMS, JIPMER, PGIMER, NIMHANS and SCTIMST. It uses the INI-CET January 2025 and January 2026 seat allocation results (Round 1, Round 2 and the open round).
+A static website that shows closing ranks for every MD, MS, MCh/DM (6 year) and MDS branch at AIIMS, JIPMER, PGIMER, NIMHANS and SCTIMST. It uses the INI-CET January 2025, January 2026 and July 2026 seat allocation results (Round 1, Round 2 and the open round).
 
 Students enter their rank, category and quota. The site then shows:
 - **Check my rank:** your chance at each college for a branch, or for all branches.
@@ -16,7 +16,7 @@ Students enter their rank, category and quota. The site then shows:
 | `docs/index.html` | The built site. GitHub Pages serves it from `/docs`. |
 | `src/` | The page's head (styles), body markup and app script. |
 | `src/colleges.js` | Facts for each institute (stipend, fees, bond, hostel) with source links. |
-| `data/alldata.js` | Normalised allotments embedded in the page (7,238 rows). |
+| `data/alldata.js` | Normalised allotments embedded in the page (10,850 rows). |
 | `data/allotments_raw.json` | Parsed rows before branch names were normalised. |
 | `scripts/parseall.py` | Extracts allotments from the result notifications converted to text (`pdftotext -layout`). |
 | `scripts/norm.py` | Groups branch names that differ by institute and writes `data/alldata.js`. |
@@ -24,13 +24,14 @@ Students enter their rank, category and quota. The site then shows:
 
 ## Rebuilding
 
-1. Convert each result PDF with `pdftotext -layout`. Save the 2026 files as `r1.txt`, `r2.txt`, `r3.txt` and the 2025 files as `y1.txt`, `y2.txt`, `y3.txt`.
+1. Convert each result PDF with `pdftotext -layout`. Save January 2026 as `r1.txt`, `r2.txt`, `r3.txt`, January 2025 as `y1.txt`, `y2.txt`, `y3.txt`, and July 2026 as `j1.txt`, `j2.txt`, `j3.txt`.
 2. Run `python3 scripts/parseall.py && python3 scripts/norm.py` in that folder. Then copy `alldata.js` into `data/`.
 3. Run `scripts/build.sh`.
 
 ## Sources
 
 AIIMS New Delhi result notifications:
+- Jul 2026: No. 205/2026 (Round 1), 216/2026 (Round 2), 261/2026 (open round)
 - Jan 2026: No. 327/2025 (Round 1), 02/2026 (Round 2), 69/2026 (open round)
 - Jan 2025: No. 168/2024 (Round 1), 01/2025 (Round 2), 28/2025 (open round)
 

@@ -1,4 +1,5 @@
 const RN={1:'Round 1',2:'Round 2',3:'Open round'};
+const SESS=['January 2025','January 2026','July 2026'],SORD=[2,1,0],SSH=['Jan 2025','Jan 2026','Jul 2026'];
 const $=id=>document.getElementById(id);
 const fmt=n=>n.toLocaleString('en-IN');
 const VERD={strong:['c-strong','Strong chance'],good:['c-good','Good chance'],warn:['c-warn','Borderline'],bad:['c-bad','Unlikely']};
@@ -49,7 +50,7 @@ function check(){
   const u=user(),b=BR();
   const seats=['UR','OCS'].concat(u.cat!=='UR'?[u.cat]:[]).concat(u.pwd?['PwBD']:[]).concat(u.ip?['institutional at '+u.ip]:[]).concat(u.spons?['Sponsored']:[]);
   const allB=b<0;$('unl-wrap').hidden=!allB;
-  $('explain').textContent=(allB?'All branches':B[b].replace('MDS: ','MDS '))+', January '+(2025+Y())+'. Comparing against seats you can take: '+seats.join(', ')+'.';
+  $('explain').textContent=(allB?'All branches':B[b].replace('MDS: ','MDS '))+', '+SESS[Y()]+' session. Comparing against seats you can take: '+seats.join(', ')+'.';
   const items=assess(D.rows.filter(r=>r[0]===Y()&&(allB?typeOk(r[5]):r[5]===b)&&eligible(r,u)),u);
   items.sort((a,c)=>(ORDER[a.v]??0)-(ORDER[c.v]??0)||(allB?a.best-c.best:c.best-a.best));
   const cnt={strong:0,good:0,warn:0,bad:0};items.forEach(o=>o.v&&cnt[o.v]++);
@@ -112,13 +113,13 @@ function colleges(){
   const h=location.hash.slice(1);
   const name=I.find(i=>slug(i)===h);
   if(!name){
-    const r1=I.map((n,ii)=>({n,ii,s26:D.rows.filter(r=>r[0]===1&&r[1]===1&&r[4]===ii).length,b:new Set(D.rows.filter(r=>r[4]===ii).map(r=>r[5])).size}));
-    $('colview').innerHTML='<p class="note">Stipend, fees, bond and seats for each institute. Tap one to open it.</p><div class="cgrid">'+r1.sort((a,b)=>b.s26-a.s26).map(c=>{const m=COL[c.n]||{};return `<a class="ccard" href="#${slug(c.n)}"><b>${c.n}</b><span>${m.city?m.city+', '+m.state:''}</span><span>${c.s26} seats filled in Round 1, 2026 · ${c.b} branches</span></a>`}).join('')+'</div>';
+    const r1=I.map((n,ii)=>({n,ii,s26:D.rows.filter(r=>r[0]===Y()&&r[1]===1&&r[4]===ii).length,b:new Set(D.rows.filter(r=>r[4]===ii).map(r=>r[5])).size}));
+    $('colview').innerHTML='<p class="note">Stipend, fees, bond and seats for each institute. Tap one to open it.</p><div class="cgrid">'+r1.sort((a,b)=>b.s26-a.s26).map(c=>{const m=COL[c.n]||{};return `<a class="ccard" href="#${slug(c.n)}"><b>${c.n}</b><span>${m.city?m.city+', '+m.state:''}</span><span>${c.s26} seats filled in Round 1, ${SSH[Y()]} · ${c.b} branches</span></a>`}).join('')+'</div>';
     return;
   }
   const ii=I.indexOf(name),m=COL[name]||{},u=user();
   const rows=D.rows.filter(r=>r[4]===ii);
-  const s26=rows.filter(r=>r[0]===1&&r[1]===1).length,s25=rows.filter(r=>r[0]===0&&r[1]===1).length;
+  const y=Y(),sl=SSH[y];
   const brs=[...new Set(rows.map(r=>r[5]))].filter(typeOk).sort((x,y)=>B[x].localeCompare(B[y]));
   const close=(bi,y,seat)=>{const v=rows.filter(r=>r[0]===y&&r[5]===bi&&S[r[6]]===seat).map(r=>r[2]);return v.length?fmt(Math.max(...v)):'–'};
   const cnt=(bi,y)=>rows.filter(r=>r[0]===y&&r[1]===1&&r[5]===bi).length||'–';
@@ -127,13 +128,13 @@ function colleges(){
   const src=SRC[m.src];
   $('colview').innerHTML=`<a class="back" href="#colleges">← All colleges</a>
   <div class="chead"><h2>${name}</h2><p>${m.city?m.city+', '+m.state:''}</p></div>
-  <div class="stats"><div class="stat"><b>${s26}</b><span>Round 1 seats filled, 2026</span></div><div class="stat"><b>${s25}</b><span>Round 1 seats filled, 2025</span></div><div class="stat"><b>${brs.length}</b><span>Branches shown</span></div></div>
+  <div class="stats">${SORD.map(s=>`<div class="stat"><b>${rows.filter(r=>r[0]===s&&r[1]===1).length}</b><span>Round 1 seats, ${SSH[s]}</span></div>`).join('')}<div class="stat"><b>${brs.length}</b><span>Branches shown</span></div></div>
   <dl class="facts">${fact('stipend','Stipend')}${fact('fees','Fees')}${fact('bond','Bond and penalty')}${fact('duration','Duration')}${fact('hostel','Hostel')}</dl>
   ${src?`<p class="srcline">Source: <a href="${src.u}" target="_blank" rel="noopener">${src.t}</a>. Figures can change between sessions, so confirm with the latest prospectus.</p>`:''}
   <h3 style="font-family:var(--display);margin:8px 0 0">Seats and closing ranks by branch</h3>
-  <p class="note">Seats are the number of seats filled in Round 1 across all quotas, counted from the result lists, so they are close to but not exactly the seat matrix. Closing ranks are the last rank allotted in any round. Tap a branch to check your chances.</p>
-  <div class="tw"><table><thead><tr><th>Branch</th><th class="num">Seats 2026</th><th class="num">Seats 2025</th><th class="num">UR close 2026</th>${showCat?`<th class="num">${u.cat} close 2026</th>`:''}<th class="num">UR close 2025</th></tr></thead><tbody>
-  ${brs.map(bi=>`<tr class="click" data-b="${bi}" tabindex="0"><th scope="row">${esc(B[bi].replace('MDS: ','MDS '))} <span class="tt">${TYPE[bi]==='Undefined'?'MD or MS':TYPE[bi]}</span></th><td class="r">${cnt(bi,1)}</td><td class="r">${cnt(bi,0)}</td><td class="r">${close(bi,1,'UR')}</td>${showCat?`<td class="r">${close(bi,1,u.cat)}</td>`:''}<td class="r">${close(bi,0,'UR')}</td></tr>`).join('')}
+  <p class="note">Seats are the number of seats filled in Round 1 across all quotas, counted from the result lists, so they are close to but not exactly the seat matrix. Closing ranks are the last rank allotted in any round of the ${SESS[y]} session (change it with the session picker). Tap a branch to check your chances.</p>
+  <div class="tw"><table><thead><tr><th>Branch</th>${SORD.map(s=>`<th class="num">Seats ${SSH[s]}</th>`).join('')}<th class="num">UR close ${sl}</th>${showCat?`<th class="num">${u.cat} close ${sl}</th>`:''}</tr></thead><tbody>
+  ${brs.map(bi=>`<tr class="click" data-b="${bi}" tabindex="0"><th scope="row">${esc(B[bi].replace('MDS: ','MDS '))} <span class="tt">${TYPE[bi]==='Undefined'?'MD or MS':TYPE[bi]}</span></th>${SORD.map(s=>`<td class="r">${cnt(bi,s)}</td>`).join('')}<td class="r">${close(bi,y,'UR')}</td>${showCat?`<td class="r">${close(bi,y,u.cat)}</td>`:''}</tr>`).join('')}
   </tbody></table></div>`;
 }
 $('colview').addEventListener('click',e=>{const tr=e.target.closest('tr[data-b]');if(tr){$('branch').value=tr.dataset.b;location.hash='';tab('check')}});
