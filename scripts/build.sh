@@ -13,7 +13,7 @@ cd "$(dirname "$0")/.."
   echo '</head>
 <body>'
   cat src/body.html
-  echo '<script>'; cat data/alldata.js; echo; cat src/app.js; echo '</script>
+  echo '<script>'; cat data/alldata.js; echo; cat src/colleges.js; echo; cat src/app.js; echo '</script>
 </body>
 </html>'
 } > docs/index.html

@@ -65,7 +65,7 @@ function check(){
     const v=o.v?VERD[o.v]:null;
     const cells=[1,2,3].map(k=>{const x=o.rd[k];return `<div><small>${RN[k]}</small>${x?`<b>${fmt(x.close)}</b><em>closed on ${x.seat} seat</em>`:'<b>–</b><em>no allotment</em>'}</div>`}).join('');
     const marks=[1,2,3].filter(k=>o.rd[k]).map(k=>`<span class="mk r${k}" style="left:${pos(o.rd[k].close)}" title="${RN[k]}: ${fmt(o.rd[k].close)}"></span>`).join('');
-    return `<article class="card"><h3>${allB?`${o.br.replace('MDS: ','MDS ')} <span class="at">at ${o.inst}</span>`:o.inst}</h3>${v?`<span class="chip ${v[0]}">${v[1]}</span>`:'<span></span>'}
+    return `<article class="card"><h3>${allB?`${o.br.replace('MDS: ','MDS ')} <span class="at">at <a class="ilink" href="#${slug(o.inst)}">${o.inst}</a></span>`:`<a class="ilink" href="#${slug(o.inst)}">${o.inst}</a>`}</h3>${v?`<span class="chip ${v[0]}">${v[1]}</span>`:'<span></span>'}
     <div class="meta">Last rank allotted in any round: ${fmt(o.best)}${u.rank?(u.rank<=o.best?` · you are ${fmt(o.best-u.rank)} ranks inside it`:` · you are ${fmt(u.rank-o.best)} ranks past it`):''}</div>
     <div class="rounds">${cells}</div>
     <div class="scale" aria-hidden="true"><span class="track"></span>${marks}${u.rank?`<span class="you" style="left:${pos(u.rank)}"></span>`:''}</div></article>`}).join('');
@@ -106,13 +106,46 @@ function table(){
   document.querySelectorAll('#pane-all thead th').forEach(th=>th.setAttribute('aria-sort',th.dataset.k==sortK?(sortDir>0?'ascending':'descending'):'none'));
 }
 document.querySelectorAll('#pane-all thead th').forEach(th=>th.addEventListener('click',()=>{const k=+th.dataset.k;sortDir=k===sortK?-sortDir:1;sortK=k;table()}));
-function render(){({check,compare,table:tables,all:table})[state.tab]()}
+const slug=s=>'college-'+s.toLowerCase().replace(/[^a-z0-9]+/g,'-');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function colleges(){
+  const h=location.hash.slice(1);
+  const name=I.find(i=>slug(i)===h);
+  if(!name){
+    const r1=I.map((n,ii)=>({n,ii,s26:D.rows.filter(r=>r[0]===1&&r[1]===1&&r[4]===ii).length,b:new Set(D.rows.filter(r=>r[4]===ii).map(r=>r[5])).size}));
+    $('colview').innerHTML='<p class="note">Stipend, fees, bond and seats for each institute. Tap one to open it.</p><div class="cgrid">'+r1.sort((a,b)=>b.s26-a.s26).map(c=>{const m=COL[c.n]||{};return `<a class="ccard" href="#${slug(c.n)}"><b>${c.n}</b><span>${m.city?m.city+', '+m.state:''}</span><span>${c.s26} seats filled in Round 1, 2026 · ${c.b} branches</span></a>`}).join('')+'</div>';
+    return;
+  }
+  const ii=I.indexOf(name),m=COL[name]||{},u=user();
+  const rows=D.rows.filter(r=>r[4]===ii);
+  const s26=rows.filter(r=>r[0]===1&&r[1]===1).length,s25=rows.filter(r=>r[0]===0&&r[1]===1).length;
+  const brs=[...new Set(rows.map(r=>r[5]))].filter(typeOk).sort((x,y)=>B[x].localeCompare(B[y]));
+  const close=(bi,y,seat)=>{const v=rows.filter(r=>r[0]===y&&r[5]===bi&&S[r[6]]===seat).map(r=>r[2]);return v.length?fmt(Math.max(...v)):'–'};
+  const cnt=(bi,y)=>rows.filter(r=>r[0]===y&&r[1]===1&&r[5]===bi).length||'–';
+  const showCat=u.cat!=='UR';
+  const fact=(k,l)=>`<dt>${l}</dt><dd>${m[k]?esc(m[k]):'<span class="ns">Not stated in the prospectus. Check the institute website.</span>'}</dd>`;
+  const src=SRC[m.src];
+  $('colview').innerHTML=`<a class="back" href="#colleges">← All colleges</a>
+  <div class="chead"><h2>${name}</h2><p>${m.city?m.city+', '+m.state:''}</p></div>
+  <div class="stats"><div class="stat"><b>${s26}</b><span>Round 1 seats filled, 2026</span></div><div class="stat"><b>${s25}</b><span>Round 1 seats filled, 2025</span></div><div class="stat"><b>${brs.length}</b><span>Branches shown</span></div></div>
+  <dl class="facts">${fact('stipend','Stipend')}${fact('fees','Fees')}${fact('bond','Bond and penalty')}${fact('duration','Duration')}${fact('hostel','Hostel')}</dl>
+  ${src?`<p class="srcline">Source: <a href="${src.u}" target="_blank" rel="noopener">${src.t}</a>. Figures can change between sessions, so confirm with the latest prospectus.</p>`:''}
+  <h3 style="font-family:var(--display);margin:8px 0 0">Seats and closing ranks by branch</h3>
+  <p class="note">Seats are the number of seats filled in Round 1 across all quotas, counted from the result lists, so they are close to but not exactly the seat matrix. Closing ranks are the last rank allotted in any round. Tap a branch to check your chances.</p>
+  <div class="tw"><table><thead><tr><th>Branch</th><th class="num">Seats 2026</th><th class="num">Seats 2025</th><th class="num">UR close 2026</th>${showCat?`<th class="num">${u.cat} close 2026</th>`:''}<th class="num">UR close 2025</th></tr></thead><tbody>
+  ${brs.map(bi=>`<tr class="click" data-b="${bi}" tabindex="0"><th scope="row">${esc(B[bi].replace('MDS: ','MDS '))} <span class="tt">${TYPE[bi]==='Undefined'?'MD or MS':TYPE[bi]}</span></th><td class="r">${cnt(bi,1)}</td><td class="r">${cnt(bi,0)}</td><td class="r">${close(bi,1,'UR')}</td>${showCat?`<td class="r">${close(bi,1,u.cat)}</td>`:''}<td class="r">${close(bi,0,'UR')}</td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+$('colview').addEventListener('click',e=>{const tr=e.target.closest('tr[data-b]');if(tr){$('branch').value=tr.dataset.b;location.hash='';tab('check')}});
+function render(){({check,compare,table:tables,all:table,colleges})[state.tab]()}
 ['rank','cat','ip','pwd','spons','branch','unl'].forEach(id=>$(id).addEventListener('input',render));
 document.querySelectorAll('.ptype').forEach(x=>x.addEventListener('input',render));
 $('year').addEventListener('input',()=>{options();render()});
 ['f-round','f-inst','f-seat','f-max'].forEach(id=>$(id).addEventListener('input',table));
-function tab(t){state.tab=t;['check','compare','table','all'].forEach(x=>{$('tab-'+x).setAttribute('aria-selected',x===t);$('pane-'+x).hidden=x!==t});render()}
-['check','compare','table','all'].forEach(x=>$('tab-'+x).onclick=()=>tab(x));
+function tab(t){state.tab=t;if(t!=='colleges'&&location.hash.startsWith('#college'))history.replaceState(null,'',location.pathname+location.search);['check','compare','table','all','colleges'].forEach(x=>{$('tab-'+x).setAttribute('aria-selected',x===t);$('pane-'+x).hidden=x!==t});render()}
+['check','compare','table','all','colleges'].forEach(x=>$('tab-'+x).onclick=()=>tab(x));
+function route(){if(location.hash.startsWith('#college')){if(state.tab!=='colleges')tab('colleges');else colleges();window.scrollTo(0,0)}}
+window.addEventListener('hashchange',route);
 function setTheme(t,save){
   if(t)document.documentElement.setAttribute('data-theme',t);else document.documentElement.removeAttribute('data-theme');
   document.querySelectorAll('.theme button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.t===t));
@@ -121,4 +154,4 @@ function setTheme(t,save){
 document.querySelectorAll('.theme button').forEach(x=>x.addEventListener('click',()=>setTheme(x.dataset.t,true)));
 (function(){let t=null;try{t=localStorage.getItem('theme')}catch(e){}
   setTheme(t||'',false)})();
-options();render();
+options();render();route();

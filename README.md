@@ -7,6 +7,7 @@ Students enter their rank, category and quota. The site then shows:
 - **Compare branches:** how many colleges your rank reaches in each branch.
 - **Cutoff tables:** category-wise closing ranks for any branch.
 - **All allotments:** every allotted seat, which you can filter.
+- **Colleges:** a page for each institute with its stipend, fees, bond, course length, hostel, seats filled per branch and closing ranks. Each figure links to the official INI-CET prospectus it comes from, and anything the prospectus doesn't state is marked.
 
 ## Layout
 
@@ -14,6 +15,7 @@ Students enter their rank, category and quota. The site then shows:
 |---|---|
 | `docs/index.html` | The built site. GitHub Pages serves it from `/docs`. |
 | `src/` | The page's head (styles), body markup and app script. |
+| `src/colleges.js` | Facts for each institute (stipend, fees, bond, hostel) with source links. |
 | `data/alldata.js` | Normalised allotments embedded in the page (7,238 rows). |
 | `data/allotments_raw.json` | Parsed rows before branch names were normalised. |
 | `scripts/parseall.py` | Extracts allotments from the result notifications converted to text (`pdftotext -layout`). |

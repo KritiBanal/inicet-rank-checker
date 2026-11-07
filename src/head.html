@@ -87,4 +87,25 @@ header{display:flex;flex-direction:column;gap:10px}
 .theme{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:2px;background:var(--panel)}
 .theme button{font:inherit;font-size:.8rem;font-weight:600;color:var(--muted);background:none;border:0;border-radius:999px;padding:4px 12px;cursor:pointer}
 .theme button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.ccard{display:flex;flex-direction:column;gap:2px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;color:var(--fg);text-decoration:none}
+.ccard:hover,.ccard:focus-visible{border-color:var(--accent)}
+.ccard b{font-size:1rem}.ccard span{color:var(--muted);font-size:.85rem}
+.back{color:var(--accent);text-decoration:none;font-weight:600;font-size:.9rem}
+.chead h2{font-family:var(--display);font-size:1.6rem;margin:4px 0 2px}
+.chead p{margin:0;color:var(--muted)}
+.stats{display:flex;flex-wrap:wrap;gap:10px}
+#colview{display:flex;flex-direction:column;gap:14px}
+.stat{flex:1 1 120px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 14px}
+.stat b{display:block;font-family:var(--mono);font-size:1.3rem;font-weight:500}
+.stat span{font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.facts{display:grid;grid-template-columns:minmax(90px,140px) minmax(0,1fr);gap:0;background:var(--panel);border:1px solid var(--line);border-radius:8px;margin:0}
+.facts dt,.facts dd{padding:10px 14px;border-bottom:1px solid var(--line);margin:0}
+.facts dt{font-weight:600;font-size:.85rem;color:var(--muted)}
+.facts dt:nth-last-of-type(1),.facts dd:last-of-type{border-bottom:0}
+.ns{color:var(--warn);font-style:italic}
+.srcline{font-size:.82rem;color:var(--muted);margin:0}
+.srcline a,.ilink{color:var(--accent)}
+.ilink{text-decoration:none}.ilink:hover{text-decoration:underline}
+@media (max-width:520px){.facts{grid-template-columns:1fr}.facts dt{border-bottom:0;padding-bottom:0}}
 </style>
