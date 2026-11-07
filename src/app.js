@@ -113,4 +113,12 @@ $('year').addEventListener('input',()=>{options();render()});
 ['f-round','f-inst','f-seat','f-max'].forEach(id=>$(id).addEventListener('input',table));
 function tab(t){state.tab=t;['check','compare','table','all'].forEach(x=>{$('tab-'+x).setAttribute('aria-selected',x===t);$('pane-'+x).hidden=x!==t});render()}
 ['check','compare','table','all'].forEach(x=>$('tab-'+x).onclick=()=>tab(x));
+function setTheme(t,save){
+  if(t)document.documentElement.setAttribute('data-theme',t);else document.documentElement.removeAttribute('data-theme');
+  document.querySelectorAll('.theme button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.t===t));
+  if(save){try{localStorage.setItem('theme',t)}catch(e){}}
+}
+document.querySelectorAll('.theme button').forEach(x=>x.addEventListener('click',()=>setTheme(x.dataset.t,true)));
+(function(){let t=null;try{t=localStorage.getItem('theme')}catch(e){}
+  setTheme(t||'',false)})();
 options();render();

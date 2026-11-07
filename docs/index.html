@@ -85,12 +85,20 @@ td.r{text-align:right;font-family:var(--mono)}
 .types{grid-column:1/-1;border:0;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 18px;min-width:0}
 .types legend{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:0;margin-bottom:6px}
 .tt{font-size:.7rem;font-weight:600;letter-spacing:.04em;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 5px;margin-left:4px;vertical-align:1px}
+header{display:flex;flex-direction:column;gap:10px}
+.hrow h1{margin:0}
+.hrow{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:10px 16px}
+.hrow h1{min-width:0}
+.theme{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:2px;background:var(--panel)}
+.theme button{font:inherit;font-size:.8rem;font-weight:600;color:var(--muted);background:none;border:0;border-radius:999px;padding:4px 12px;cursor:pointer}
+.theme button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
-<h1>INI-CET <span>rank checker</span></h1>
+<div class="hrow"><h1>INI-CET <span>rank checker</span></h1>
+<div class="theme" role="group" aria-label="Theme"><button type="button" id="th-auto" data-t="">Auto</button><button type="button" id="th-light" data-t="light">Light</button><button type="button" id="th-dark" data-t="dark">Dark</button></div></div>
 <p>Closing ranks for every MD, MS, MCh/DM (6 year) and MDS branch at AIIMS, JIPMER, PGIMER, NIMHANS and SCTIMST, from the January 2025 and January 2026 counselling rounds. Enter your rank and category to see where you stand.</p>
 </header>
 <div class="controls">
@@ -268,6 +276,14 @@ $('year').addEventListener('input',()=>{options();render()});
 ['f-round','f-inst','f-seat','f-max'].forEach(id=>$(id).addEventListener('input',table));
 function tab(t){state.tab=t;['check','compare','table','all'].forEach(x=>{$('tab-'+x).setAttribute('aria-selected',x===t);$('pane-'+x).hidden=x!==t});render()}
 ['check','compare','table','all'].forEach(x=>$('tab-'+x).onclick=()=>tab(x));
+function setTheme(t,save){
+  if(t)document.documentElement.setAttribute('data-theme',t);else document.documentElement.removeAttribute('data-theme');
+  document.querySelectorAll('.theme button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.t===t));
+  if(save){try{localStorage.setItem('theme',t)}catch(e){}}
+}
+document.querySelectorAll('.theme button').forEach(x=>x.addEventListener('click',()=>setTheme(x.dataset.t,true)));
+(function(){let t=null;try{t=localStorage.getItem('theme')}catch(e){}
+  setTheme(t||'',false)})();
 options();render();
 </script>
 </body>
