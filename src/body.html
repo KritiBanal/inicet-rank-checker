@@ -1,0 +1,63 @@
+<div class="wrap">
+<header>
+<h1>INI-CET <span>rank checker</span></h1>
+<p>Closing ranks for every MD, MS, MCh/DM (6 year) and MDS branch at AIIMS, JIPMER, PGIMER, NIMHANS and SCTIMST, from the January 2025 and January 2026 counselling rounds. Enter your rank and category to see where you stand.</p>
+</header>
+<div class="controls">
+<label for="year">Counselling session<select id="year"><option value="1">INI-CET January 2026</option><option value="0">INI-CET January 2025</option></select></label>
+<label for="branch">Branch<select id="branch"></select></label>
+<label for="rank">Your INI-CET rank<input id="rank" type="number" min="1" inputmode="numeric" value="1800"></label>
+<label for="cat">Your category<select id="cat"><option>UR</option><option>EWS</option><option selected>OBC</option><option>SC</option><option>ST</option></select></label>
+<label for="ip">Institutional quota<select id="ip"><option value="">Not applicable</option></select></label>
+<fieldset class="types"><legend>Type of PG</legend><label class="check" for="t-MD"><input id="t-MD" class="ptype" type="checkbox" value="MD" checked>MD</label><label class="check" for="t-MS"><input id="t-MS" class="ptype" type="checkbox" value="MS" checked>MS</label><label class="check" for="t-MCh"><input id="t-MCh" class="ptype" type="checkbox" value="MCh" checked>MCh (6 yr)</label><label class="check" for="t-DM"><input id="t-DM" class="ptype" type="checkbox" value="DM" checked>DM (6 yr)</label><label class="check" for="t-MDS"><input id="t-MDS" class="ptype" type="checkbox" value="MDS" checked>MDS</label><label class="check" for="t-Undefined"><input id="t-Undefined" class="ptype" type="checkbox" value="Undefined" checked>Undefined (MD or MS)</label></fieldset>
+<label class="check" for="pwd"><input id="pwd" type="checkbox">I am a PwBD candidate</label>
+<label class="check" for="spons"><input id="spons" type="checkbox">I am a sponsored candidate</label>
+</div>
+<div class="tabs" role="tablist">
+<button role="tab" id="tab-check" aria-selected="true">Check my rank</button>
+<button role="tab" id="tab-compare" aria-selected="false">Compare branches</button>
+<button role="tab" id="tab-table" aria-selected="false">Cutoff tables</button>
+<button role="tab" id="tab-all" aria-selected="false">All allotments</button>
+</div>
+
+<section id="pane-check" class="cwrap">
+<p class="note" id="explain"></p>
+<div class="summary" id="summary"></div>
+<label class="check" id="unl-wrap" for="unl" hidden><input id="unl" type="checkbox">Show unlikely options too</label>
+<p class="note" id="allnote"></p>
+<div class="legend"><span><i style="background:var(--strong)"></i>Round 1 closing</span><span><i style="background:var(--good)"></i>Round 2 closing</span><span><i style="background:var(--warn)"></i>Open round closing</span><span><i style="background:var(--accent);border-radius:0;width:3px"></i>Your rank</span></div>
+<div class="list" id="list"></div>
+</section>
+
+<section id="pane-compare" class="cwrap" hidden>
+<p class="note">Every branch of the ticked PG types, ranked by how many colleges your rank reached in this session. Tap a branch to see its colleges.</p>
+<div class="tw"><table><thead><tr><th>Branch</th><th class="num">Strong</th><th class="num">Good</th><th class="num">Borderline</th><th class="num">Colleges</th><th class="num">Furthest rank allotted</th></tr></thead><tbody id="cbody"></tbody></table></div>
+</section>
+
+<section id="pane-table" class="cwrap" hidden>
+<p class="note">Category-wise closing ranks for the selected branch and session. Categories follow the seat's roster point, so a reserved-category candidate who took an open seat counts under UR. Rows run from most to least competitive.</p>
+<div id="tables" class="cwrap"></div>
+</section>
+
+<section id="pane-all" class="cwrap" hidden>
+<div class="controls">
+<label for="f-round">Round<select id="f-round"><option value="">All rounds</option><option value="1">Round 1</option><option value="2">Round 2</option><option value="3">Open round</option></select></label>
+<label for="f-inst">Institute<select id="f-inst"><option value="">All institutes</option></select></label>
+<label for="f-seat">Seat category<select id="f-seat"><option value="">All seat categories</option></select></label>
+<label for="f-max">Rank up to<input id="f-max" type="number" min="1" placeholder="Any rank"></label>
+</div>
+<span class="count" id="count"></span>
+<div class="tw"><table><thead><tr>
+<th data-k="2" class="num">Rank</th><th data-k="3">Candidate category</th><th data-k="5">Branch</th><th data-k="4">Institute</th><th data-k="7">Seat (roster point)</th><th data-k="1">Round</th>
+</tr></thead><tbody id="tbody"></tbody></table></div>
+</section>
+
+<footer>
+<b>How to read this.</b> A closing rank is the rank of the last candidate allotted a seat of that category, branch and institute in that round. Reserved-category candidates can also take UR and open category (OCS) seats, so the checker counts those too. IP seats are only for graduates of that AIIMS, and INST seats only for JIPMER graduates. Ratings: strong means you would have got the seat in Round 1. Good means a seat went to someone at your rank or worse in some round. Borderline means you are within 15% past the last rank allotted. The result files name MCh, DM and MDS courses but not MD or MS. A branch is typed MD or MS only when it is taught under that one degree; Anatomy, Obstetrics &amp; Gynaecology and Ophthalmology are awarded as MD at some institutes and MS at others, so they are listed as Undefined. Branch names differ between institutes (for example Medicine and General Medicine), so they are grouped under one name. Seats under special quotas (RA, NED, KD) are listed in All allotments but not used in the ratings. Past closing ranks guide you; they don't guarantee a seat.
+<ul>
+<li>Jan 2026: AIIMS New Delhi Result Notifications 327/2025 (Round 1, 18.12.2025), 02/2026 (Round 2, 09.01.2026), 69/2026 (open round, 21.02.2026)</li>
+<li>Jan 2025: Result Notifications 168/2024 (Round 1, 19.12.2024), 01/2025 (Round 2, 07.01.2025), 28/2025 (open round, 21.02.2025)</li>
+<li>Open round lists contain only seats filled in that round.</li>
+</ul>
+</footer>
+</div>
